@@ -1,7 +1,9 @@
 package server
 
 import (
+	"fmt"
 	"io"
+	"net"
 	"net/http"
 )
 
@@ -18,6 +20,7 @@ func NewHTTPServer(port string) *HTTPServer {
 // Open creates the http server
 func (s HTTPServer) Open() error {
 	http.HandleFunc("/", home)
+	http.HandleFunc("dnscheck", dnscheck)
 	http.ListenAndServe(s.port, nil)
 
 	return nil
@@ -25,4 +28,16 @@ func (s HTTPServer) Open() error {
 
 func home(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "Hello World")
+}
+
+func dnscheck(w http.ResponseWriter, r *http.Request) {
+	host := r.FormValue("host")
+	resolver := net.Resolver{}
+	ips, err := resolver.LookupIPAddr(r.Context(), host)
+	if err != nil {
+		fmt.Fprintf(w, "Failed to resolve %s: %v", host, err)
+		return
+	} else {
+		fmt.Fprintf(w, "Resolved %s to %v", host, ips)
+	}
 }
