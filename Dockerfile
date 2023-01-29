@@ -1,10 +1,10 @@
 FROM golang:alpine AS build
 
-#RUN apk add git
+RUN apk add git
 
-#RUN mkdir /src
-#ADD . /src
-#WORKDIR /src
+RUN mkdir /src
+ADD . /src
+WORKDIR /src
 
 RUN go build -o /tmp/simple-http-server main.go
 
