@@ -20,7 +20,7 @@ func NewHTTPServer(port string) *HTTPServer {
 // Open creates the http server
 func (s HTTPServer) Open() error {
 	http.HandleFunc("/", home)
-	http.HandleFunc("dnscheck", dnscheck)
+	http.HandleFunc("/dnscheck", dnscheck)
 	http.ListenAndServe(s.port, nil)
 
 	return nil
