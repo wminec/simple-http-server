@@ -35,9 +35,9 @@ func dnscheck(w http.ResponseWriter, r *http.Request) {
 	resolver := net.Resolver{}
 	ips, err := resolver.LookupIPAddr(r.Context(), host)
 	if err != nil {
-		fmt.Fprintf(w, "Failed to resolve %s: %v", host, err)
+		fmt.Fprintf(w, "Failed to resolve %s: %v\n", host, err)
 		return
 	} else {
-		fmt.Fprintf(w, "Resolved %s to %v", host, ips)
+		fmt.Fprintf(w, "Resolved %s to %v\n", host, ips)
 	}
 }
