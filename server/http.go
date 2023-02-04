@@ -21,6 +21,7 @@ func NewHTTPServer(port string) *HTTPServer {
 func (s HTTPServer) Open() error {
 	http.HandleFunc("/", home)
 	http.HandleFunc("/dnscheck", dnscheck)
+	http.HandleFunc("/rdnscheck", revdnscheck)
 	http.ListenAndServe(s.port, nil)
 
 	return nil
@@ -39,5 +40,17 @@ func dnscheck(w http.ResponseWriter, r *http.Request) {
 		return
 	} else {
 		fmt.Fprintf(w, "Resolved %s to %v\n", host, ips)
+	}
+}
+
+func revdnscheck(w http.ResponseWriter, r *http.Request) {
+	ip := r.FormValue("ip")
+	resolver := net.Resolver{}
+	host, err := resolver.LookupAddr(r.Context(), ip)
+	if err != nil {
+		fmt.Fprintf(w, "Failed to resolve %s: %v\n", ip, err)
+		return
+	} else {
+		fmt.Fprintf(w, "resolved %s to %v\n", ip, host)
 	}
 }
