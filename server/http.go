@@ -20,8 +20,10 @@ func NewHTTPServer(port string) *HTTPServer {
 // Open creates the http server
 func (s HTTPServer) Open() error {
 	http.HandleFunc("/", home)
-	http.HandleFunc("/dnscheck", dnscheck)
-	http.HandleFunc("/rdnscheck", revdnscheck)
+	http.HandleFunc("/dnscheck", dnsCheck)
+	http.HandleFunc("/rdnscheck", revDnsCheck)
+	http.HandleFunc("/allreqheader", printAllReqHeader)
+
 	http.ListenAndServe(s.port, nil)
 
 	return nil
@@ -31,7 +33,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "Hello World")
 }
 
-func dnscheck(w http.ResponseWriter, r *http.Request) {
+func dnsCheck(w http.ResponseWriter, r *http.Request) {
 	host := r.FormValue("host")
 	resolver := net.Resolver{}
 	ips, err := resolver.LookupIPAddr(r.Context(), host)
@@ -43,7 +45,7 @@ func dnscheck(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func revdnscheck(w http.ResponseWriter, r *http.Request) {
+func revDnsCheck(w http.ResponseWriter, r *http.Request) {
 	ip := r.FormValue("ip")
 	resolver := net.Resolver{}
 	host, err := resolver.LookupAddr(r.Context(), ip)
@@ -52,5 +54,11 @@ func revdnscheck(w http.ResponseWriter, r *http.Request) {
 		return
 	} else {
 		fmt.Fprintf(w, "resolved %s to %v\n", ip, host)
+	}
+}
+
+func printAllReqHeader(w http.ResponseWriter, r *http.Request) {
+	for k, v := range r.Header {
+		fmt.Fprintf(w, "%s : %s\n", k, v)
 	}
 }
