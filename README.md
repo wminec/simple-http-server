@@ -1,4 +1,7 @@
-useage
+# simple-http-server
+simple http server with test app for kubernetes
+
+# Useage
 
 # dns check
 curl :8080/dnscheck?host=google.com
